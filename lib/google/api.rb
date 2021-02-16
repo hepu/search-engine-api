@@ -16,12 +16,11 @@ module Google
           num: per_page,
           start: offset_per_page(page, per_page)
         }
-        puts "[Google] options: #{options.inspect}"
         response = get(
           "/customsearch/v1",
           query: options
         )
-        puts "Google response: #{response.body.inspect}"
+        Rails.logger.info "[Google] #{response.body.inspect}"
         raise "Error from Google API" if response.code != 200
 
         response

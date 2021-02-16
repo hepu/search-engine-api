@@ -9,22 +9,18 @@ module Bing
 
     class << self
       def search(query, page: 1, per_page: PER_PAGE)
-        headers = {
-          'Ocp-Apim-Subscription-Key' => ENV['BING_API_KEY']
-        }
-        options = {
-          q: query,
-          count: per_page + 1,
-          offset: offset_per_page(page, per_page + 1)
-        }
-        puts "[Bing] headers: #{options.inspect}"
-        puts "[Bing] query: #{options.inspect}"
         response = get(
           "/v7.0/search",
-          headers: headers,
-          query: options
+          headers: {
+            'Ocp-Apim-Subscription-Key' => ENV['BING_API_KEY']
+          },
+          query: {
+            q: query,
+            count: per_page + 1,
+            offset: offset_per_page(page, per_page + 1)
+          }
         )
-        puts "Bing response: #{response.body.inspect}"
+        Rails.logger.info "[Bing] #{response.body.inspect}"
         raise 'Error from Bing API' if response.code != 200
 
         response
