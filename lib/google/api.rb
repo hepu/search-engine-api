@@ -9,15 +9,17 @@ module Google
 
     class << self
       def search(query, page: 1, per_page: PER_PAGE)
+        options = {
+          key: ENV['GOOGLE_API_KEY'],
+          cx: ENV['GOOGLE_SEARCH_ENGINE_ID'],
+          q: query,
+          num: per_page,
+          start: offset_per_page(page, per_page)
+        }
+        puts "[Google] options: #{options.inspect}"
         response = get(
           "/customsearch/v1",
-          query: {
-            key: ENV['GOOGLE_API_KEY'],
-            cx: ENV['GOOGLE_SEARCH_ENGINE_ID'],
-            q: query,
-            num: per_page,
-            start: offset_per_page(page, per_page)
-          }
+          query: options
         )
         puts "Google response: #{response.body.inspect}"
         raise "Error from Google API" if response.code != 200
