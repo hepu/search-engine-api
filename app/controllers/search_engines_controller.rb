@@ -3,10 +3,10 @@
 class SearchEnginesController < ApplicationController
   before_action :validate_engine
 
-  def search
-    search_result = SearchService.new(search_params[:text], engine: @engine, page: search_params[:page]&.to_i || 1).call
+  rescue_from StandardError, with: :render_search_error
 
-    render json: search_result
+  def search
+    render json: SearchService.new(search_params[:text], engine: @engine, page: search_params[:page]&.to_i || 1).call
   end
 
   private
@@ -21,5 +21,9 @@ class SearchEnginesController < ApplicationController
     return render_error("'engine' param is required") if @engine.blank?
 
     return render_error("Invalid engine: #{@engine}") unless SearchService::ENGINES.values.include?(@engine&.downcase)
+  end
+
+  def render_search_error(error)
+    render_error("A search error occurred: #{error.message}")
   end
 end
