@@ -20,7 +20,7 @@ module Bing
             offset: offset_per_page(page, per_page + 1)
           }
         )
-        puts response.inspect
+        puts response.body.inspect
         raise 'Error from Bing API' if response.code != 200
 
         response
