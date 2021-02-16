@@ -26,6 +26,9 @@ class SearchEnginesController < ApplicationController
   end
 
   def render_search_error(error)
-    render_error("A search error occurred: #{error.message}")
+    render_error({
+      message: error.message,
+      backtrace: error.backtrace
+    })
   end
 end
