@@ -19,6 +19,7 @@ gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
 group :development, :test do
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
   gem "dotenv-rails", "~> 2.7"
+  gem "rspec-rails", "~> 4.0"
   gem "rubocop-rails", "~> 2.9.1", require: false
 end
 

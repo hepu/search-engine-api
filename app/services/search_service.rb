@@ -3,7 +3,7 @@
 class SearchService
   ENGINES = { google: 'google', bing: 'bing', both: 'both' }.freeze
 
-  def initialize(text, engine:, page:)
+  def initialize(text, engine:, page: 1)
     @text = text
     @engine = engine
     @page = page
@@ -20,11 +20,9 @@ class SearchService
       bing_result = BingSearchService.new(@text, page: @page, per_page: 5).call
 
       {
+        engine: ENGINES[:both],
         items: google_result[:items].concat(bing_result[:items]),
-        pagination: {
-          page: @page,
-          per_page: 10
-        }
+        pagination: { page: @page, per_page: 10 }
       }
     end
   end

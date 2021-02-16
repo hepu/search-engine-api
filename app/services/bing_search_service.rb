@@ -13,6 +13,7 @@ class BingSearchService
     result = Bing::Api.search(@query, page: @page, per_page: @per_page)
 
     {
+      engine: 'bing',
       items: result['webPages']['value'].map { |item| item_extractor(item) },
       pagination: { page: @page, per_page: @per_page }
     }

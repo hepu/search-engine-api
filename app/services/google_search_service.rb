@@ -11,7 +11,9 @@ class GoogleSearchService
 
   def call
     result = Google::Api.search(@query, page: @page, per_page: @per_page)
+
     {
+      engine: 'google',
       items: result['items'].map { |item| item_extractor(item) },
       pagination: { page: @page, per_page: @per_page }
     }
