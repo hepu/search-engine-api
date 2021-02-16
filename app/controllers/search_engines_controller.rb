@@ -3,18 +3,16 @@
 class SearchEnginesController < ApplicationController
   before_action :validate_engine
 
-  VALID_ENGINES = %w[google bing both].freeze
-
   def search
-    @text = search_params[:text]
+    search_result = SearchService.new(search_params[:text], engine: @engine, page: search_params[:page]&.to_i || 1).call
 
-    render json: { engine: @engine, text: @text }
+    render json: search_result
   end
 
   private
 
   def search_params
-    params.permit(:engine, :text)
+    params.permit(:engine, :text, :page)
   end
 
   def validate_engine
@@ -22,6 +20,6 @@ class SearchEnginesController < ApplicationController
 
     return render_error("'engine' param is required") if @engine.blank?
 
-    return render_error("Invalid engine: #{@engine}") unless VALID_ENGINES.include?(@engine&.downcase)
+    return render_error("Invalid engine: #{@engine}") unless SearchService::ENGINES.values.include?(@engine&.downcase)
   end
 end

@@ -5,20 +5,34 @@ module Google
     include HTTParty
     base_uri 'https://www.googleapis.com'
 
-    class << self
-      def search(query)
-        api_key = ENV['GOOGLE_API_KEY']
-        cx = ENV['GOOGLE_SEARCH_ENGINE_ID']
+    PER_PAGE = 10
 
-        response = get("/customsearch/v1", query: { key: api_key, cx: cx, q: query })
+    class << self
+      def search(query, page: 1, per_page: PER_PAGE)
+        response = get(
+          "/customsearch/v1",
+          query: {
+            key: ENV['GOOGLE_API_KEY'],
+            cx: ENV['GOOGLE_SEARCH_ENGINE_ID'],
+            q: query,
+            num: per_page,
+            start: offset_per_page(page, per_page)
+          }
+        )
 
         raise 'Error from Google API' if response.code != 200
 
         response
-      rescue StandardError => e
-        {
-          error: e.message
-        }
+      end
+
+      private
+
+      def offset_per_page(page, per_page)
+        return 0 if page <= 1
+
+        move_to_next_page_index = 1
+
+        ((page - 1) * per_page) + move_to_next_page_index
       end
     end
   end
