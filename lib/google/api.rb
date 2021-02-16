@@ -19,8 +19,8 @@ module Google
             start: offset_per_page(page, per_page)
           }
         )
-        puts response.body.inspect
-        raise "Error from Google API: #{response.body.inspect}" if response.code != 200
+        puts "Google response: #{response.body.inspect}"
+        raise "Error from Google API" if response.code != 200
 
         response
       end
