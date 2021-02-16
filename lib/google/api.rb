@@ -20,7 +20,7 @@ module Google
           }
         )
 
-        raise 'Error from Google API' if response.code != 200
+        raise "Error from Google API: #{response.body.inspect}" if response.code != 200
 
         response
       end
