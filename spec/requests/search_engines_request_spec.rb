@@ -4,7 +4,7 @@ require 'rails_helper'
 require 'google/api'
 require 'bing/api'
 
-RSpec.describe SearchEnginesController, type: :controller do
+RSpec.describe SearchEnginesController, type: :request do
   describe 'GET search' do
     before do
       allow(Google::Api).to receive(:search).and_return({
@@ -41,7 +41,7 @@ RSpec.describe SearchEnginesController, type: :controller do
 
     context 'when engine param is not sent' do
       before do
-        get :search, params: { text: 'something' }
+        get search_path, params: { text: 'something' }
       end
 
       it "returns a 400 status code" do
@@ -52,7 +52,7 @@ RSpec.describe SearchEnginesController, type: :controller do
     context 'when engine param is present' do
       context 'and is google' do
         before do
-          get :search, params: { text: 'something', engine: 'google' }
+          get search_path, params: { text: 'something', engine: 'google' }
         end
 
         it "returns a 200 status code" do
@@ -66,7 +66,7 @@ RSpec.describe SearchEnginesController, type: :controller do
 
       context 'and is bing' do
         before do
-          get :search, params: { text: 'else', engine: 'bing' }
+          get search_path, params: { text: 'else', engine: 'bing' }
         end
 
         it "returns a 200 status code" do
@@ -80,7 +80,7 @@ RSpec.describe SearchEnginesController, type: :controller do
 
       context 'and is both' do
         before do
-          get :search, params: { text: 'find', engine: 'both' }
+          get search_path, params: { text: 'find', engine: 'both' }
         end
 
         it "returns a 200 status code" do
@@ -94,11 +94,11 @@ RSpec.describe SearchEnginesController, type: :controller do
 
       context 'and is a different value' do
         before do
-          get :search, params: { text: 'else', engine: 'bong' }
+          get search_path, params: { text: 'else', engine: 'bong' }
         end
 
-        it "returns a 406 status code" do
-          expect(response).to have_http_status(:not_acceptable)
+        it "returns a 400 status code" do
+          expect(response).to have_http_status(:bad_request)
         end
       end
     end

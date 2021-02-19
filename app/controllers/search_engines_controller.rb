@@ -1,12 +1,17 @@
 # frozen_string_literal: true
 
 class SearchEnginesController < ApplicationController
-  before_action :validate_engine
-
   rescue_from StandardError, with: :render_search_error
 
   def search
-    render json: SearchService.new(search_params[:text], engine: @engine, page: search_params[:page]&.to_i || 1).call
+    @search = Search.new
+    @search.assign_attributes(search_params)
+
+    if @search.valid?
+      render json: SearchService.new(@search.text, engine: @search.engine, page: @search.page&.to_i || 1).call
+    else
+      render_error(@search.errors.full_messages.to_sentence, :bad_request)
+    end
   end
 
   private
@@ -15,17 +20,8 @@ class SearchEnginesController < ApplicationController
     params.permit(:engine, :text, :page)
   end
 
-  def validate_engine
-    @engine = search_params[:engine]
-
-    return render_error("'engine' param is required", :bad_request) if @engine.blank?
-
-    return if SearchService::ENGINES.values.include?(@engine&.downcase)
-
-    render_error("Invalid engine: #{@engine}", :not_acceptable)
-  end
-
   def render_search_error(error)
+    Rails.logger.error("A search error occurred: #{error.message}")
     render_error("A search error occurred: #{error.message}")
   end
 end

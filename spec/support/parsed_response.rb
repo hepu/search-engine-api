@@ -5,5 +5,6 @@ module ParsedResponse
 end
 
 RSpec.configure do |config|
+  config.include ParsedResponse, type: :request
   config.include ParsedResponse, type: :controller
 end
